@@ -1,42 +1,29 @@
-# Ubuntu Migration Toolkit - Agent Execution Manual
+# How to Use the Migration Toolkit
 
-## 1. Overview
+## Overview
 
-This document provides instructions for an AI agent or a human operator on how to use the modular toolkit to perform a backup or restore of a personalized Ubuntu environment. The system is designed for granular, step-by-step execution.
+This project uses scripts to back up and restore your Ubuntu environment. You can run the whole process automatically or step-by-step.
 
-**Core Components:**
-- **`tools/`**: Contains all executable scripts, categorized into `backup` and `restore`.
-- **`backups/`**: The designated storage for all created backup archives (`.tar.gz`) and their corresponding tracker files (`.txt`).
-- **`logs/`**: Contains detailed, timestamped logs of every operation performed by the scripts.
-- **`run_migration.sh`**: An optional, interactive script for running the full backup or restore process automatically.
+## Automatic Mode
 
-## 2. Agent-Specific Instructions
+To run the full backup or restore process, use the `run.sh` script:
 
-As an AI agent, you are expected to not only execute the migration tasks but also to be able to modify and adapt the tool scripts in response to errors or user requests. All such actions must be logged.
-
-**Logging Requirements:**
-- You must maintain a log file at `logs/ai.log`.
-- For every modification you make to a script, you must log the following:
-    - **Timestamp**: The date and time of the action.
-    - **Trigger**: The reason for the change (e.g., "User Request", "Error Encountered").
-    - **File Modified**: The full path to the script you changed.
-    - **Problem Description**: A clear explanation of the error or the user's request.
-    - **Solution Description**: A detailed explanation of the changes you made to solve the problem.
-
-**Example Log Entry:**
 ```
-[2025-07-12 14:30:00] - AGENT ACTION
-- Trigger: Error Encountered
-- File Modified: /home/auluna/Projects/UbuntuSetup/tools/restore/pip.sh
-- Problem: The script failed because the 'scipy' package was not found.
-- Solution: Removed 'scipy' from the list of packages to install and added a comment explaining that it needs to be installed from a different source.
+bash run.sh
 ```
 
-## 3. Backup Process
+Follow the menu options. This script will create one log file for the entire run in the `logs/` directory.
 
-To perform a full backup, execute the following scripts from the `tools/backup/` directory. The order is important.
+It also has an option to launch the Gemini CLI for AI assistance.
 
-**Execution Order:**
+## Manual Mode (For Agents or Advanced Users)
+
+You can run each script individually for more control.
+
+### Backup Process
+
+Run these scripts from the `tools/backup/` folder in this order:
+
 1.  `ui.sh`
 2.  `configs.sh`
 3.  `steam.sh`
@@ -44,15 +31,23 @@ To perform a full backup, execute the following scripts from the `tools/backup/`
 5.  `software_lists.sh`
 6.  `archive.sh`
 
-## 4. Restore Process
+### Restore Process
 
-To perform a full restore, you will need a backup archive. Execute the following scripts from the `tools/restore/` directory in order.
+Run these scripts from the `tools/restore/` folder in this order:
 
-**Execution Order:**
-1.  `user_data.sh [archive_path]`
+1.  `user_data.sh [path_to_archive]`
 2.  `apt.sh`
 3.  `third_party_repos.sh`
 4.  `pip.sh`
 5.  `flatpak.sh`
 6.  `finalize.sh`
 7.  `jetbrains_icons.sh` (Optional)
+
+### AI Agent Instructions
+
+If you are an AI agent modifying these scripts, you must log your changes in `logs/ai.log`. For each change, record:
+
+- The reason for the change (error or user request).
+- The name of the file you modified.
+- A description of the problem.
+- A description of your solution.

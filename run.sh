@@ -2,6 +2,11 @@
 
 # --- Main Orchestrator Script ---
 
+# Define a single log file for this entire run
+export MIGRATION_LOG_FILE="/home/auluna/Projects/UbuntuSetup/logs/migration_log_$(date +"%Y-%m-%d_%H-%M-%S").log"
+mkdir -p "$(dirname "$MIGRATION_LOG_FILE")"
+touch "$MIGRATION_LOG_FILE"
+
 # --- Color Codes for Output ---
 C_RESET='\033[0m'
 C_GREEN='\033[0;32m'

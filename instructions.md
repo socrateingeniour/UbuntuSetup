@@ -55,10 +55,49 @@ On your **new computer**, run the restore command:
 ./migrate.sh restore
 ```
 
-This script will:
-- Install all the applications we planned (VS Code, Java, Python libraries, Flatpaks, etc.).
-- Restore all your themes, icons, fonts, and application configurations.
-- Set up your VS Code and GNOME extensions.
+The script will perform a fully automated installation of the following software:
+
+<details>
+<summary><b>Click to view the full software manifest</b></summary>
+
+**1. Base System & Utilities (from Ubuntu APT Repository)**
+- `gnome-tweaks`: For advanced GNOME desktop customization.
+- `conky`: For the system monitor display.
+- `flatpak`: The framework for running sandboxed applications.
+- `gnome-shell-extension-manager`: To manage your GNOME extensions.
+- `wget`: Utility for downloading files.
+- `gpg`: For managing encryption keys.
+- `python3-pip`: The package installer for Python.
+
+**2. Third-Party Repositories (Installed via APT)**
+- `code`: Visual Studio Code (from the official Microsoft repository).
+- `temurin-21-jdk`: Eclipse Temurin JDK 21 (from the official Adoptium repository).
+
+**3. Python Libraries (Installed via Pip)**
+- `numpy`
+- `scipy`
+- `matplotlib`
+- `pandas`
+- `jupyterlab`
+- `scikit-learn`
+- `seaborn`
+
+**4. Flatpak Applications (Installed from Flathub)**
+- **Verified:**
+  - `org.wireshark.Wireshark` (Wireshark)
+  - `com.valvesoftware.Steam` (Steam)
+  - `com.discordapp.Discord` (Discord)
+  - `com.obsproject.Studio` (OBS Studio)
+  - `io.github.flattool.Warehouse` (Warehouse)
+  - `io.missioncenter.MissionCenter` (Mission Center)
+  - `com.github.tchx84.Flatseal` (Flatseal)
+- **Unverified:**
+  - `com.getpostman.Postman` (Postman)
+  - `io.dbeaver.DBeaverCommunity` (DBeaver)
+
+</details>
+
+It will also restore all your themes, icons, fonts, and application configurations, and set up your VS Code and GNOME extensions.
 
 After the script finishes, **log out and log back in** to ensure all changes are applied correctly.
 

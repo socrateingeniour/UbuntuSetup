@@ -1,62 +1,58 @@
- Definitive Migration Plan (v4)
+# Ubuntu Migration Toolkit - Agent Execution Manual
 
-  The process will be managed by a GitHub repository containing the migrate.sh and fix_jetbrains_icons.sh scripts, plus a comprehensive README.md.
+## 1. Overview
 
-  Part 1: The `migrate.sh` Script
+This document provides instructions for an AI agent or a human operator on how to use the modular toolkit to perform a backup or restore of a personalized Ubuntu environment. The system is designed for granular, step-by-step execution.
 
-  ##### A) `backup` function (On your CURRENT PC)
+**Core Components:**
+- **`tools/`**: Contains all executable scripts, categorized into `backup` and `restore`.
+- **`backups/`**: The designated storage for all created backup archives (`.tar.gz`) and their corresponding tracker files (`.txt`).
+- **`logs/`**: Contains detailed, timestamped logs of every operation performed by the scripts.
+- **`run_migration.sh`**: An optional, interactive script for running the full backup or restore process automatically.
 
-  This stage is unchanged. It will securely package all your specified user files into a single migration_archive.tar.gz.
+## 2. Agent-Specific Instructions
 
-   * Files to be backed up:
-       * UI: ~/.themes/, ~/.icons/, ~/.local/share/themes/, ~/.local/share/icons/, ~/.fonts/.
-       * Configs: ~/.config/dconf/, ~/.config/conky/, ~/.conky/, ~/.config/Code/ (for safety, though settings sync is preferred), ~/.config/wireshark/, ~/.steam/ (excluding
-         game data), ~/.local/share/Steam/ (excluding game data), ~/.config/Postman/, ~/.config/discord/, ~/.config/obs-studio/, ~/.config/gdlauncher_next/.
-       * AppImage: /home/auluna/Applications/GDLauncher.AppImage and its .desktop file.
-       * Software Lists: vscode_extensions.txt, gnome_extensions_list.txt, gnome_extensions_backup.dconf.
+As an AI agent, you are expected to not only execute the migration tasks but also to be able to modify and adapt the tool scripts in response to errors or user requests. All such actions must be logged.
 
-  ##### B) `restore` function (On your NEW Laptop)
+**Logging Requirements:**
+- You must maintain a log file at `logs/ai.log`.
+- For every modification you make to a script, you must log the following:
+    - **Timestamp**: The date and time of the action.
+    - **Trigger**: The reason for the change (e.g., "User Request", "Error Encountered").
+    - **File Modified**: The full path to the script you changed.
+    - **Problem Description**: A clear explanation of the error or the user's request.
+    - **Solution Description**: A detailed explanation of the changes you made to solve the problem.
 
-  This function is now structured according to your new installation hierarchy.
+**Example Log Entry:**
+```
+[2025-07-12 14:30:00] - AGENT ACTION
+- Trigger: Error Encountered
+- File Modified: /home/auluna/Projects/UbuntuSetup/tools/restore/pip.sh
+- Problem: The script failed because the 'scipy' package was not found.
+- Solution: Removed 'scipy' from the list of packages to install and added a comment explaining that it needs to be installed from a different source.
+```
 
-   1. Install Base Software & System Tools (via APT):
-       * What: Core utilities and applications sourced directly from Ubuntu's repositories.
-       * Apps to be installed: gnome-tweaks, conky, flatpak, gnome-shell-extension-manager, wget, gpg, python3-pip.
+## 3. Backup Process
 
-   2. Install Software from Third-Party Repositories (via APT):
-       * What: Trusted applications that provide their own official repositories for Debian/Ubuntu.
-       * Visual Studio Code: The script will add the official Microsoft GPG key and repository, then install code.
-       * Java 21: The script will add the official Adoptium/Temurin GPG key and repository, then install temurin-21-jdk.
+To perform a full backup, execute the following scripts from the `tools/backup/` directory. The order is important.
 
-   3. Install Python Libraries (via Pip):
-       * What: The comprehensive list of recommended Python libraries.
-       * Libraries to be installed: numpy, scipy, matplotlib, pandas, jupyterlab, scikit-learn, seaborn.
+**Execution Order:**
+1.  `ui.sh`
+2.  `configs.sh`
+3.  `steam.sh`
+4.  `appimages.sh`
+5.  `software_lists.sh`
+6.  `archive.sh`
 
-   4. Install Applications (via Flathub):
-       * What: The remainder of your graphical applications, installed from Flathub. The script will clearly distinguish between verified and unverified apps.
-       * Action: The script will add the Flathub remote repository.
-       * Verified Apps to be installed:
-           * org.wireshark.Wireshark (Wireshark)
-           * com.valvesoftware.Steam (Steam)
-           * com.discordapp.Discord (Discord)
-           * com.obsproject.Studio (OBS Studio)
-           * io.github.flattool.Warehouse (Warehouse)
-           * io.missioncenter.MissionCenter (Mission Center)
-           * com.github.tchx84.Flatseal (Flatseal)
-       * Unverified Apps to be installed:
-           * com.getpostman.Postman (Postman)
-           * io.dbeaver.DBeaverCommunity (DBeaver)
-       * Instruction: The README.md will contain a prominent section explaining why these apps are unverified and provide explicit, step-by-step instructions on how to use
-         Flatseal to review and restrict their permissions (e.g., limit filesystem access, disable network access if not needed).
+## 4. Restore Process
 
-   5. Restore All User Data:
-       * Action: The migration_archive.tar.gz will be extracted, copying all your themes, icons, fonts, and application configurations to their correct locations.
+To perform a full restore, you will need a backup archive. Execute the following scripts from the `tools/restore/` directory in order.
 
-   6. Finalize Application Setups:
-       * GDLauncher: The AppImage will be moved to ~/Applications/, made executable, and its .desktop file restored.
-       * VS Code & GNOME Shell: Extensions will be reinstalled and configured using the backed-up files.
-
-  Part 2: The `fix_jetbrains_icons.sh` Script
-
-  This script remains unchanged. It is a separate tool for you to run after you have manually installed your IDEs using the JetBrains Toolbox. It will find the .desktop files
-  and apply your "candy-icons" theme to them.
+**Execution Order:**
+1.  `user_data.sh [archive_path]`
+2.  `apt.sh`
+3.  `third_party_repos.sh`
+4.  `pip.sh`
+5.  `flatpak.sh`
+6.  `finalize.sh`
+7.  `jetbrains_icons.sh` (Optional)

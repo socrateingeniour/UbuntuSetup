@@ -1,133 +1,62 @@
-# Migration Instructions
+ Definitive Migration Plan (v4)
 
-This document provides a detailed, step-by-step guide for migrating your Ubuntu environment using the scripts in this repository.
+  The process will be managed by a GitHub repository containing the migrate.sh and fix_jetbrains_icons.sh scripts, plus a comprehensive README.md.
 
-## How It Works
+  Part 1: The `migrate.sh` Script
 
-The process is broken into three main stages:
+  ##### A) `backup` function (On your CURRENT PC)
 
-1.  **Backup (On your OLD machine):** You will run a script to gather all your important configuration files and package them into a single archive file.
-2.  **Transfer:** You will move this archive to your new machine (e.g., via a USB drive, cloud storage, or by committing it to this Git repository).
-3.  **Restore (On your NEW machine):** You will run a script that installs all the necessary software and then restores all your configurations from the archive.
+  This stage is unchanged. It will securely package all your specified user files into a single migration_archive.tar.gz.
 
----
+   * Files to be backed up:
+       * UI: ~/.themes/, ~/.icons/, ~/.local/share/themes/, ~/.local/share/icons/, ~/.fonts/.
+       * Configs: ~/.config/dconf/, ~/.config/conky/, ~/.conky/, ~/.config/Code/ (for safety, though settings sync is preferred), ~/.config/wireshark/, ~/.steam/ (excluding
+         game data), ~/.local/share/Steam/ (excluding game data), ~/.config/Postman/, ~/.config/discord/, ~/.config/obs-studio/, ~/.config/gdlauncher_next/.
+       * AppImage: /home/auluna/Applications/GDLauncher.AppImage and its .desktop file.
+       * Software Lists: vscode_extensions.txt, gnome_extensions_list.txt, gnome_extensions_backup.dconf.
 
-## Step 1: Backup Your Current System
+  ##### B) `restore` function (On your NEW Laptop)
 
-On your **current (old) computer**, follow these steps:
+  This function is now structured according to your new installation hierarchy.
 
-1.  **Open a terminal** in this repository's directory (`/home/auluna/Projects/UbuntuSetup/`).
+   1. Install Base Software & System Tools (via APT):
+       * What: Core utilities and applications sourced directly from Ubuntu's repositories.
+       * Apps to be installed: gnome-tweaks, conky, flatpak, gnome-shell-extension-manager, wget, gpg, python3-pip.
 
-2.  **Make the migration script executable:**
-    ```bash
-    chmod +x migrate.sh
-    ```
+   2. Install Software from Third-Party Repositories (via APT):
+       * What: Trusted applications that provide their own official repositories for Debian/Ubuntu.
+       * Visual Studio Code: The script will add the official Microsoft GPG key and repository, then install code.
+       * Java 21: The script will add the official Adoptium/Temurin GPG key and repository, then install temurin-21-jdk.
 
-3.  **Run the backup command:**
-    ```bash
-    ./migrate.sh backup
-    ```
+   3. Install Python Libraries (via Pip):
+       * What: The comprehensive list of recommended Python libraries.
+       * Libraries to be installed: numpy, scipy, matplotlib, pandas, jupyterlab, scikit-learn, seaborn.
 
-This will create a file named `migration_archive.tar.gz` in the current directory. This file contains all your backed-up data.
+   4. Install Applications (via Flathub):
+       * What: The remainder of your graphical applications, installed from Flathub. The script will clearly distinguish between verified and unverified apps.
+       * Action: The script will add the Flathub remote repository.
+       * Verified Apps to be installed:
+           * org.wireshark.Wireshark (Wireshark)
+           * com.valvesoftware.Steam (Steam)
+           * com.discordapp.Discord (Discord)
+           * com.obsproject.Studio (OBS Studio)
+           * io.github.flattool.Warehouse (Warehouse)
+           * io.missioncenter.MissionCenter (Mission Center)
+           * com.github.tchx84.Flatseal (Flatseal)
+       * Unverified Apps to be installed:
+           * com.getpostman.Postman (Postman)
+           * io.dbeaver.DBeaverCommunity (DBeaver)
+       * Instruction: The README.md will contain a prominent section explaining why these apps are unverified and provide explicit, step-by-step instructions on how to use
+         Flatseal to review and restrict their permissions (e.g., limit filesystem access, disable network access if not needed).
 
----
+   5. Restore All User Data:
+       * Action: The migration_archive.tar.gz will be extracted, copying all your themes, icons, fonts, and application configurations to their correct locations.
 
-## Step 2: Prepare Your New System
+   6. Finalize Application Setups:
+       * GDLauncher: The AppImage will be moved to ~/Applications/, made executable, and its .desktop file restored.
+       * VS Code & GNOME Shell: Extensions will be reinstalled and configured using the backed-up files.
 
-On your **new (freshly installed Ubuntu) computer**, follow these steps:
+  Part 2: The `fix_jetbrains_icons.sh` Script
 
-1.  **Clone this repository** to your new machine.
-
-2.  **Place the `migration_archive.tar.gz` file** you created in Step 1 into the same directory as the scripts.
-
-3.  **Make the migration script executable:**
-    ```bash
-    chmod +x migrate.sh
-    ```
-
----
-
-## Step 3: Restore Your System
-
-On your **new computer**, run the restore command:
-
-```bash
-./migrate.sh restore
-```
-
-The script will perform a fully automated installation of the following software:
-
-<details>
-<summary><b>Click to view the full software manifest</b></summary>
-
-**1. Base System & Utilities (from Ubuntu APT Repository)**
-- `gnome-tweaks`: For advanced GNOME desktop customization.
-- `conky`: For the system monitor display.
-- `flatpak`: The framework for running sandboxed applications.
-- `gnome-shell-extension-manager`: To manage your GNOME extensions.
-- `wget`: Utility for downloading files.
-- `gpg`: For managing encryption keys.
-- `python3-pip`: The package installer for Python.
-
-**2. Third-Party Repositories (Installed via APT)**
-- `code`: Visual Studio Code (from the official Microsoft repository).
-- `temurin-21-jdk`: Eclipse Temurin JDK 21 (from the official Adoptium repository).
-
-**3. Python Libraries (Installed via Pip)**
-- `numpy`
-- `scipy`
-- `matplotlib`
-- `pandas`
-- `jupyterlab`
-- `scikit-learn`
-- `seaborn`
-
-**4. Flatpak Applications (Installed from Flathub)**
-- **Verified:**
-  - `org.wireshark.Wireshark` (Wireshark)
-  - `com.valvesoftware.Steam` (Steam)
-  - `com.discordapp.Discord` (Discord)
-  - `com.obsproject.Studio` (OBS Studio)
-  - `io.github.flattool.Warehouse` (Warehouse)
-  - `io.missioncenter.MissionCenter` (Mission Center)
-  - `com.github.tchx84.Flatseal` (Flatseal)
-- **Unverified:**
-  - `com.getpostman.Postman` (Postman)
-  - `io.dbeaver.DBeaverCommunity` (DBeaver)
-
-</details>
-
-It will also restore all your themes, icons, fonts, and application configurations, and set up your VS Code and GNOME extensions.
-
-After the script finishes, **log out and log back in** to ensure all changes are applied correctly.
-
----
-
-## Post-Installation Tasks
-
-### 1. Secure Unverified Flatpak Apps
-
-The script installed **Postman** and **DBeaver** from Flathub, but they are from unverified developers. It is highly recommended that you review and restrict their permissions.
-
-1.  Open the **Flatseal** application.
-2.  Select **Postman** from the list on the left.
-3.  Review its permissions. A good practice is to disable **All user files** under the `Filesystem` section if you only access projects within your home directory.
-4.  Repeat the process for **DBeaver**.
-
-### 2. Configure JetBrains IDEs
-
-This step is only necessary **after** you have installed your JetBrains IDEs (like IntelliJ or PyCharm) using the **JetBrains Toolbox**.
-
-1.  Once your IDEs are installed, open a terminal in this repository's directory.
-
-2.  **Make the setup script executable:**
-    ```bash
-    chmod +x JetbrainsSetup.sh
-    ```
-
-3.  **Run the script:**
-    ```bash
-    ./JetbrainsSetup.sh
-    ```
-
-This will automatically detect your installed IDEs and update their icons to match your system's icon theme.
+  This script remains unchanged. It is a separate tool for you to run after you have manually installed your IDEs using the JetBrains Toolbox. It will find the .desktop files
+  and apply your "candy-icons" theme to them.

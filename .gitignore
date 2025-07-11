@@ -1,0 +1,4 @@
+# Ignore generated backups and logs
+
+/backups/
+/logs/
